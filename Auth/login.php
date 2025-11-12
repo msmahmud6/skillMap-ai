@@ -18,7 +18,7 @@
 
   <div class="main-login">
     <h1>LogIn Here</h1>
-    <form action="auth/login_process.php" method="POST">
+    <form action="login_helper.php" method="POST">
       <input type="email" name="email" placeholder="E-mail" required>
       <input type="password" name="password" placeholder="Password" required>
       <input type="submit" value="Login">
