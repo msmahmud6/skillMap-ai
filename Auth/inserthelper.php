@@ -2,6 +2,13 @@
 // inserthelper.php
 include '../db/db.php'; 
 
+
+// Optional: database থেকে আরো fresh data নিতে চাও
+$user_id = $_SESSION['user_id'];
+$stmt = $conn->prepare("SELECT * FROM users WHERE user_id=:user_id LIMIT 1");
+$stmt->execute(['user_id'=>$user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
