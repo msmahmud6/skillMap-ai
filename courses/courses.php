@@ -1,6 +1,51 @@
 <?php
 include '../db/db.php'; // PDO connection
 
+// Function to generate a beautiful placeholder image URL
+function getResourceImage($row) {
+    // If image_url exists and is not empty, use it
+    if (!empty($row['image_url'])) {
+        return htmlspecialchars($row['image_url']);
+    }
+    
+    // Generate a beautiful gradient placeholder based on platform
+    $platformColors = [
+        'Coursera' => ['2A73CC', '1E5B9C'],
+        'Udemy' => ['A435F0', '7C1FD6'],
+        'edX' => ['02262B', '0A4A5C'],
+        'Khan Academy' => ['14BF96', '0D8B6E'],
+        'LinkedIn Learning' => ['0077B5', '004E7A'],
+        'Pluralsight' => ['F15B2A', 'C4451F'],
+        'FreeCodeCamp' => ['0A0A23', '1B1B32'],
+        'YouTube' => ['FF0000', 'CC0000'],
+        'Skillshare' => ['00FF84', '00CC6A'],
+        'Codecademy' => ['1F4287', '162E5C'],
+    ];
+    
+    $platform = $row['platform'];
+    
+    // Get colors for the platform or use default
+    if (isset($platformColors[$platform])) {
+        $color1 = $platformColors[$platform][0];
+        $color2 = $platformColors[$platform][1];
+    } else {
+        $color1 = '667eea';
+        $color2 = '764ba2';
+    }
+    
+    // Create a deterministic but varied background using course_id
+    $seed = $row['course_id'] ?? 1;
+    $patterns = ['topography', 'circuit-board', 'hideout', 'graph-paper', 'jigsaw', 'bubbles', 'formal-invitation', 'wiggle'];
+    $pattern = $patterns[$seed % count($patterns)];
+    
+    // Use a placeholder service with gradient
+    $title = urlencode(substr($row['course_title'], 0, 30));
+    
+    // Return a styled placeholder using DiceBear or similar service
+    // For now, we'll use a simple colored placeholder with the platform name
+    return "https://placehold.co/400x250/{$color1}/{$color2}?text=" . urlencode($platform);
+}
+
 // Pagination setup
 $limit = 12;
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
@@ -181,6 +226,43 @@ sort($allSkills);
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
+
+        /* Resource Card Image Styles */
+        .resource-card {
+            overflow: hidden;
+        }
+
+        .resource-image-container {
+            width: calc(100% + 40px);
+            height: 180px;
+            margin: -20px -20px 15px -20px;
+            overflow: hidden;
+            border-radius: 12px 12px 0 0;
+            position: relative;
+        }
+
+        .resource-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .resource-card:hover .resource-image {
+            transform: scale(1.08);
+        }
+
+        /* Gradient overlay for better text readability */
+        .resource-image-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0,0,0,0.3), transparent);
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -207,15 +289,6 @@ sort($allSkills);
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <!-- <div class="filter-group">
-                        <label>Skill</label>
-                        <select name="skill">
-                            <option value="">All Skills</option>
-                            <?php foreach ($allSkills as $opt): ?>
-                                <option value="<?= htmlspecialchars($opt) ?>" <?= $skill == $opt ? 'selected' : '' ?>><?= htmlspecialchars($opt) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div> -->
                     <div class="filter-group">
                         <label>Cost</label>
                         <select name="cost">
@@ -242,6 +315,13 @@ sort($allSkills);
             <?php else: ?>
                 <?php foreach ($resources as $row): ?>
                     <div class="resource-card">
+                        <div class="resource-image-container">
+                            <img src="<?= getResourceImage($row) ?>" 
+                                 alt="<?= htmlspecialchars($row['course_title']) ?>" 
+                                 class="resource-image"
+                                 loading="lazy">
+                        </div>
+                        
                         <div class="resource-header">
                             <div class="resource-title"><?= htmlspecialchars($row['course_title']) ?></div>
                             <div class="platform-name"><?= htmlspecialchars($row['platform']) ?></div>
