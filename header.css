@@ -9,13 +9,17 @@
 
 }
 
+.test{
+    color: #e0f2fe,#dbeafe,#6b7280,#76b852#2563eb,#3b82f6;
+}
+
 body{
     min-height: 100vh;
     background:linear-gradient(#F1FAFF,#CBE4FF);
 }
 
 .sidebar{
-    background: #6c68c7;
+    background: #151A2D;
     width: 230px;
     position:fixed;
     /* margin: 16px; */
@@ -99,7 +103,7 @@ body{
     padding: 0 15px;
     transform: translateY(15px);
     transition: .4s ease;
-    margin-top: 20px;  /* adjust */
+    /* margin-top: 20px;  adjust */
 
 }
 

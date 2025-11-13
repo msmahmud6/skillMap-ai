@@ -8,7 +8,7 @@
     <!-- Google Material Symbols -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" />
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="header.css">
 </head>
 <body>
     <div class="sidebar">
@@ -100,6 +100,8 @@
 
     </div>
 
-    <script src="script.js"></script>
+
+
+    <script src="header.js"></script>
 </body>
 </html>
