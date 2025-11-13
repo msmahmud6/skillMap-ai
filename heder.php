@@ -15,7 +15,7 @@
         <!---- sidebar header -->
         <header class="sidebar-header">
             <a href="#" class="header-logo">
-                <img src="logo.jpeg" alt="coding">
+                <img src="temp_logo.png" alt="coding">
             </a>
 
             <button class="toggler sidebar-toggler">
