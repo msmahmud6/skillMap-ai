@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2025 at 11:15 AM
+-- Generation Time: Nov 13, 2025 at 04:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -47,6 +47,7 @@ CREATE TABLE `courses` (
   `course_title` varchar(150) NOT NULL,
   `platform` varchar(100) DEFAULT NULL,
   `course_url` varchar(255) DEFAULT NULL,
+  `image_url` varchar(500) DEFAULT NULL COMMENT 'URL of the course thumbnail/cover image',
   `related_skills` text DEFAULT NULL,
   `cost_type` enum('Free','Paid') DEFAULT 'Free'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -55,27 +56,30 @@ CREATE TABLE `courses` (
 -- Dumping data for table `courses`
 --
 
-INSERT INTO `courses` (`course_id`, `course_title`, `platform`, `course_url`, `related_skills`, `cost_type`) VALUES
-(1, 'Complete Web Development Bootcamp', 'Udemy', 'https://www.udemy.com/course/web-development-bootcamp/', 'HTML, CSS, JavaScript, React, Node.js', 'Paid'),
-(2, 'HTML & CSS Full Course', 'YouTube', 'https://www.youtube.com/watch?v=mU6anWqZJcc', 'HTML, CSS, Web Design', 'Free'),
-(3, 'JavaScript Tutorial for Beginners', 'YouTube', 'https://www.youtube.com/watch?v=W6NZfCO5SIk', 'JavaScript, Programming', 'Free'),
-(4, 'React - The Complete Guide', 'Udemy', 'https://www.udemy.com/course/react-the-complete-guide/', 'React, JavaScript, Frontend Development', 'Paid'),
-(5, 'Python for Everybody Specialization', 'Coursera', 'https://www.coursera.org/specializations/python', 'Python, Data Structures, Web Scraping', 'Free'),
-(6, 'Data Analysis with Python', 'freeCodeCamp', 'https://www.freecodecamp.org/learn/data-analysis-with-python/', 'Python, Pandas, NumPy, Data Analysis', 'Free'),
-(7, 'Excel Skills for Business Specialization', 'Coursera', 'https://www.coursera.org/specializations/excel', 'Excel, Data Analysis, Business Analytics', 'Free'),
-(8, 'UI/UX Design Specialization', 'Coursera', 'https://www.coursera.org/specializations/ui-ux-design', 'Figma, Prototyping, User Research, Design Thinking', 'Paid'),
-(9, 'The Complete Digital Marketing Course', 'Udemy', 'https://www.udemy.com/course/digital-marketing-course/', 'Social Media, SEO, Content Marketing, Google Analytics', 'Paid'),
-(10, 'Git & GitHub Crash Course', 'YouTube', 'https://www.youtube.com/watch?v=RGOj5yH7evk', 'Git, GitHub, Version Control', 'Free'),
-(11, 'SQL for Data Science', 'Coursera', 'https://www.coursera.org/learn/sql-for-data-science', 'SQL, Database, Data Querying', 'Free'),
-(12, 'Java Programming Masterclass', 'Udemy', 'https://www.udemy.com/course/java-programming-masterclass/', 'Java, OOP, Spring Boot', 'Paid'),
-(13, 'Machine Learning Specialization', 'Coursera', 'https://www.coursera.org/specializations/machine-learning-introduction', 'Python, Machine Learning, TensorFlow, AI', 'Paid'),
-(14, 'Graphic Design Masterclass', 'Udemy', 'https://www.udemy.com/course/graphic-design-masterclass/', 'Photoshop, Illustrator, Branding, Design', 'Paid'),
-(15, 'Communication Skills for Professionals', 'LinkedIn Learning', 'https://www.linkedin.com/learning/paths/communication-skills', 'Communication, Presentation, Public Speaking', 'Paid'),
-(16, 'Docker and Kubernetes Complete Guide', 'Udemy', 'https://www.udemy.com/course/docker-kubernetes/', 'Docker, Kubernetes, DevOps, Cloud', 'Paid'),
-(17, 'Node.js Tutorial for Beginners', 'YouTube', 'https://www.youtube.com/watch?v=TlB_eWDSMt4', 'Node.js, JavaScript, Backend Development', 'Free'),
-(18, 'Cybersecurity Fundamentals', 'edX', 'https://www.edx.org/learn/cybersecurity', 'Network Security, Ethical Hacking, Security', 'Free'),
-(19, 'Adobe Premiere Pro CC Course', 'Udemy', 'https://www.udemy.com/course/adobe-premiere-pro-cc-course/', 'Premiere Pro, Video Editing, Post Production', 'Paid'),
-(20, 'Agile Project Management', 'Coursera', 'https://www.coursera.org/learn/agile-project-management', 'Agile, Scrum, Project Management, Jira', 'Free');
+INSERT INTO `courses` (`course_id`, `course_title`, `platform`, `course_url`, `image_url`, `related_skills`, `cost_type`) VALUES
+(1, 'Complete Web Development Bootcamp', 'Udemy', 'https://www.udemy.com/course/web-development-bootcamp/', 'https://miro.medium.com/v2/resize:fit:1100/format:webp/0*QmxDMtQShSHGzC6v.jpg', 'HTML, CSS, JavaScript, React, Node.js', 'Paid'),
+(2, 'HTML & CSS Full Course', 'YouTube', 'https://www.youtube.com/watch?v=mU6anWqZJcc', 'https://i.ytimg.com/vi/G3e-cpL7ofc/maxresdefault.jpg', 'HTML, CSS, Web Design', 'Free'),
+(3, 'JavaScript Tutorial for Beginners', 'YouTube', 'https://www.youtube.com/watch?v=W6NZfCO5SIk', 'https://i.ytimg.com/vi/Ihy0QziLDf0/maxresdefault.jpg', 'JavaScript, Programming', 'Free'),
+(4, 'React - The Complete Guide', 'Udemy', 'https://www.udemy.com/course/react-the-complete-guide/', 'https://d3f1iyfxxz8i1e.cloudfront.net/courses/course_image_variant/db1977eaa5d2_w480.webp', 'React, JavaScript, Frontend Development', 'Paid'),
+(5, 'Python for Everybody Specialization', 'Coursera', 'https://www.coursera.org/specializations/python', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShoW0uc8EpF6dxqrtMcvu1J5zzyauXSK8VAw&s', 'Python, Data Structures, Web Scraping', 'Free'),
+(6, 'Data Analysis with Python', 'freeCodeCamp', 'https://www.freecodecamp.org/learn/data-analysis-with-python/', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6dmQyb798Uor4RPa1L5lQoWvHxyrMEPYRzw&s', 'Python, Pandas, NumPy, Data Analysis', 'Free'),
+(7, 'Excel Skills for Business Specialization', 'Coursera', 'https://www.coursera.org/specializations/excel', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd904ZrxiChT8YuApnd9P3yadsx1DJcoz5JA&s', 'Excel, Data Analysis, Business Analytics', 'Free'),
+(8, 'UI/UX Design Specialization', 'Coursera', 'https://www.coursera.org/specializations/ui-ux-design', NULL, 'Figma, Prototyping, User Research, Design Thinking', 'Paid'),
+(9, 'The Complete Digital Marketing Course', 'Udemy', 'https://www.udemy.com/course/digital-marketing-course/', NULL, 'Social Media, SEO, Content Marketing, Google Analytics', 'Paid'),
+(10, 'Git & GitHub Crash Course', 'YouTube', 'https://www.youtube.com/watch?v=RGOj5yH7evk', NULL, 'Git, GitHub, Version Control', 'Free'),
+(11, 'SQL for Data Science', 'Coursera', 'https://www.coursera.org/learn/sql-for-data-science', NULL, 'SQL, Database, Data Querying', 'Free'),
+(12, 'Java Programming Masterclass', 'Udemy', 'https://www.udemy.com/course/java-programming-masterclass/', NULL, 'Java, OOP, Spring Boot', 'Paid'),
+(13, 'Machine Learning Specialization', 'Coursera', 'https://www.coursera.org/specializations/machine-learning-introduction', NULL, 'Python, Machine Learning, TensorFlow, AI', 'Paid'),
+(14, 'Graphic Design Masterclass', 'Udemy', 'https://www.udemy.com/course/graphic-design-masterclass/', 'https://img-c.udemycdn.com/course/750x422/1643044_e281_5.jpg', 'Photoshop, Illustrator, Branding, Design', 'Paid'),
+(15, 'Communication Skills for Professionals', 'LinkedIn Learning', 'https://www.linkedin.com/learning/paths/communication-skills', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5O8-d5FaZHO_igc6rYxgBH5N5sZ9U8sesNg&s', 'Communication, Presentation, Public Speaking', 'Paid'),
+(16, 'Docker and Kubernetes Complete Guide', 'Udemy', 'https://www.udemy.com/course/docker-kubernetes/', 'https://blog.udemy.com/wp-content/uploads/2024/03/docker-vs-kubernetes.png', 'Docker, Kubernetes, DevOps, Cloud', 'Paid'),
+(17, 'Node.js Tutorial for Beginners', 'YouTube', 'https://www.youtube.com/watch?v=TlB_eWDSMt4', 'https://i.ytimg.com/vi/RLtyhwFtXQA/maxresdefault.jpg', 'Node.js, JavaScript, Backend Development', 'Free'),
+(18, 'Cybersecurity Fundamentals', 'edX', 'https://www.edx.org/learn/cybersecurity', 'https://www.edx.org/_next/image?url=https%3A%2F%2Fprod-discovery.edx-cdn.org%2Fcdn-cgi%2Fimage%2Fwidth%3Dauto%2Cheight%3Dauto%2Cquality%3D75%2Cformat%3Dwebp%2Fmedia%2Fcourse%2Fimage%2Fbb90d02a-a562-4632-a0af-e72987f27fea-8b470ba34e03.jpg&w=828&q=75', 'Network Security, Ethical Hacking, Security', 'Free'),
+(19, 'Adobe Premiere Pro CC Course', 'Udemy', 'https://www.udemy.com/course/adobe-premiere-pro-cc-course/', 'https://img-c.udemycdn.com/course/750x422/5797752_cf8c_3.jpg', 'Premiere Pro, Video Editing, Post Production', 'Paid'),
+(20, 'Agile Project Management', 'Coursera', 'https://www.coursera.org/learn/agile-project-management', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7medrDes4aQLQnylroVpLWhabO5mfNRloXg&s', 'Agile, Scrum, Project Management, Jira', 'Free'),
+(21, 'Complete Web Development Bootcamp', 'Udemy', 'https://www.udemy.com/course/web-dev', 'https://img-c.udemycdn.com/course/750x422/1565838_e54e_18.jpg', 'HTML, CSS, JavaScript, React, Node.js', 'Paid'),
+(22, 'Python for Data Science', 'Coursera', 'https://www.coursera.org/learn/python-data', 'https://s3.amazonaws.com/coursera_assets/meta_images/generated/XDP/XDP~COURSE!~python-for-applied-data-science-ai/XDP~COURSE!~python-for-applied-data-science-ai.jpeg', 'Python, Data Analysis, Machine Learning', 'Free'),
+(23, 'Introduction to Computer Science', 'edX', 'https://www.edx.org/course/cs50', 'https://prod-discovery.edx-cdn.org/cdn-cgi/image/width=auto,height=auto,quality=75,format=webp/media/course/image/da1b2400-322b-459b-97b0-0c557f05d017-a3d1899c3344.png', 'Programming, Algorithms, Data Structures', 'Free');
 
 -- --------------------------------------------------------
 
@@ -237,7 +241,7 @@ ALTER TABLE `user_cv`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `jobs`
