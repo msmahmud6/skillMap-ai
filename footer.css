@@ -1,0 +1,16 @@
+footer h6 {
+  /* text-transform: uppercase; */
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+footer a {
+  font-weight: 600;
+  transition: color 0.2s;
+}
+footer a:hover {
+  color: #ffc107; /* accent color on hover */
+  text-decoration: none;
+}
+footer p, footer .text-light-50 {
+  font-weight: 500;
+}
