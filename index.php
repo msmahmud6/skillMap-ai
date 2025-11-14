@@ -1,12 +1,4 @@
-<?php
-session_start();
-require_once 'config/db.php';
 
-if (isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
-    exit;
-}
-?>
 
 <!DOCTYPE html>
 <html lang="bn">
@@ -16,7 +8,7 @@ if (isset($_SESSION['user_id'])) {
 <title>SkillMap-AI</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="CSS/style.css">
+<link rel="stylesheet" href="CSS/styles.css">
 
 </head>
 <body>

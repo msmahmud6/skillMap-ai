@@ -1,159 +1,189 @@
-<!-- <a href="Auth/logout.php">Logout</a> -->
-
-
 <?php
-$page_title = "Dashboard";
+require_once('db/db.php');
+session_start();
+
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../Auth/login.php");
+    exit;
+}
+
+$user_id = $_SESSION['user_id'];
+
+// ✅ User info
+$stmt = $conn->prepare("SELECT * FROM users WHERE user_id = :id");
+$stmt->execute([':id' => $user_id]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// ✅ Skills
+$skillStmt = $conn->prepare("SELECT skill_name FROM skills WHERE user_id = :id");
+$skillStmt->execute([':id' => $user_id]);
+$skills = $skillStmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Fetch user skills & preferred track
+$preferred_track = $user['preferred_track'] ?? '';
+$user_skills = $skills;
+
+// Fetch all jobs and calculate matching
+$all_jobs = $conn->query("SELECT * FROM jobs")->fetchAll(PDO::FETCH_ASSOC);
+$recommended_jobs = [];
+foreach($all_jobs as $job){
+    $job_skills = array_map('trim', explode(',', $job['required_skills'] ?? ''));
+    $matching_skills = array_intersect($user_skills, $job_skills);
+    if(!empty($matching_skills)){
+        $job['matching_skills'] = $matching_skills;
+        $recommended_jobs[] = $job;
+    }
+}
+
+// Fetch all courses and calculate matching
+$all_courses = $conn->query("SELECT * FROM courses")->fetchAll(PDO::FETCH_ASSOC);
+$recommended_courses = [];
+foreach($all_courses as $course){
+    $course_skills = array_map('trim', explode(',', $course['related_skills'] ?? ''));
+    $matches = array_intersect($user_skills, $course_skills);
+    if(!empty($matches)){
+        $course['matching_skills'] = $matches;
+        $recommended_courses[] = $course;
+    }
+}
+
 ob_start();
 ?>
 
-  <!--  Main Dashboard Content -->
-  <div class="main-content mt-lg-0 pt-5 pt-lg-0 p-4">
-    <h3 class="fw-bold mb-4 mt-2 ">Dashboard</h3>
+<!-- Bubble Background Wrapper -->
+<div class="wrapper">
+  <ul class="colorlib-bubbles">
+    <?php for($i=0;$i<10;$i++): ?><li></li><?php endfor; ?>
+  </ul>
 
-<!--  Profile Overview -->
-<div class="card shadow-sm mb-4 border-0">
-  <div class="card-body d-flex flex-wrap justify-content-between align-items-start">
+  <div class="main-content mt-lg-0 pt-5 pt-lg-0 p-4 mt-2">
 
-    <!--  Left: Profile Image -->
-    <div class="text-center flex-fill d-flex justify-content-center mb-3 mb-md-0">
-      <img src="img/profile.jpeg" width="100" class="rounded-circle" alt="Profile">
-    </div>
+    <!-- Profile Overview -->
+    <div class="card shadow-sm mb-4 border-0">
+      <div class="card-body d-flex flex-wrap justify-content-between align-items-center text-center">
 
-    <!--  Middle: Welcome + Skills -->
-    <div class="text-center flex-fill d-flex flex-column align-items-center mb-3 mb-md-0">
-      <h5 class="fw-semibold">Welcome back, <span class="text-primary">Hasib Hasan</span></h5>
-      <p class="text-muted mb-2">Keep exploring, keep learning, and keep growing.</p>
+        <!-- Left: Profile Image -->
+        <div class="profile-photo flex-fill" style="max-width: 150px;">
+          <img src="Image/<?= htmlspecialchars($user['profile_photo'] ?? 'default.png') ?>" 
+               alt="Profile Photo" 
+               style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%; border: 2px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        </div>
 
-      <div class="mt-2 d-flex flex-wrap justify-content-center gap-1">
-        <span class="badge bg-light text-dark border">Python</span>
-        <span class="badge bg-light text-dark border">Django</span>
-        <span class="badge bg-light text-dark border">HTML</span>
-        <span class="badge bg-light text-dark border">CSS</span>
-        <span class="badge bg-light text-dark border">JavaScript</span>
+        <!-- Middle: Name & Skills -->
+        <div class="flex-fill mx-3 d-flex flex-column align-items-center">
+          <h5 class="fw-semibold mb-1">Welcome back, 
+            <span class="text-primary"><?= htmlspecialchars($user['fullname'] ?? 'User') ?></span>
+          </h5>
+          <p class="text-muted mb-2">Keep exploring, keep learning, and keep growing.</p>
+
+          <div class="d-flex flex-wrap justify-content-center gap-1">
+            <?php if (!empty($skills)): ?>
+              <?php foreach ($skills as $skill): ?>
+                <span class="badge bg-light text-dark border"><?= htmlspecialchars($skill) ?></span>
+              <?php endforeach; ?>
+            <?php else: ?>
+                <span class="text-muted small">No skills added yet.</span>
+            <?php endif; ?>
+          </div>
+        </div>
+
+        <!-- Right: Education Qualification -->
+        <div class="flex-fill d-flex flex-column align-items-center" style="max-width: 200px;">
+          <h6 class="fw-semibold mb-1">🎓 Education</h6>
+          <p class="text-muted mb-0 small">
+            <?= htmlspecialchars($user['edu_level'] ?? 'N/A') ?>
+          </p>
+        </div>
+
       </div>
     </div>
 
-    <!--  Right: Education Qualification -->
-    <div class="text-center flex-fill d-flex flex-column align-items-center">
-      <h6 class="fw-semibold mb-1 ">🎓 Education Qualification</h6>
-      <p class="text-muted mb-0 small">
-        Bachelor of Science in Computer Science & Engineering <br>
-        <span class="fw-medium text-dark">Kishoregang University (2020–2024)</span>
-      </p>
-    </div>
-
-  </div>
-</div>
-
-
-
-
-
-    <!--  Recommended Jobs -->
-    <div class="mb-5 ">
+    <!-- Recommended Jobs -->
+    <div class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="section-title">Recommended Jobs</h5>
-        <button class="btn btn-outline-primary btn-sm">View All</button>
+        <a href="jobs/jobs.php" class="btn btn-outline-primary btn-sm">View All</a>
       </div>
 
       <div class="row g-3 equal-row">
-        <div class="col-md-6 col-lg-4">
-          <div class="card job-card p-3 shadow-sm border-0">
-            <div>
-              <h6 class="fw-semibold mb-1">Frontend Developer</h6>
-              <p class="text-muted small mb-1">Tech Solutions Ltd.</p>
-              <span class="badge bg-warning text-dark">HTML</span>
-              <span class="badge bg-info text-dark">CSS</span>
-              <span class="badge bg-danger">JS</span>
+        <?php if (!empty($recommended_jobs)): ?>
+          <?php foreach ($recommended_jobs as $job): ?>
+            <div class="col-md-6 col-lg-4">
+              <div class="card job-card p-3 shadow-sm border-0">
+                <div>
+                  <h6 class="fw-semibold mb-1"><?= htmlspecialchars($job['job_title'] ?? '') ?></h6>
+                  <p class="text-muted small mb-1"><?= htmlspecialchars($job['company_name'] ?? '') ?></p>
+                  <?php if (!empty($job['required_skills'])): ?>
+                    <?php foreach (explode(',', $job['required_skills']) as $skill): ?>
+                      <span class="badge bg-light text-dark border"><?= htmlspecialchars(trim($skill)) ?></span>
+                    <?php endforeach; ?>
+                  <?php endif; ?>
+                  <?php if (!empty($job['matching_skills'])): ?>
+                    <div class="text-success small mt-1">
+                      Matches: <?= implode(', ', $job['matching_skills']) ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                  <small class="text-muted">
+                    <?= htmlspecialchars($job['location'] ?? 'N/A') ?> • <?= htmlspecialchars($job['job_type'] ?? 'N/A') ?>
+                  </small>
+                  <button class="btn btn-sm btn-primary">Apply</button>
+                </div>
+              </div>
             </div>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <small class="text-muted">Remote • Full-time</small>
-              <button class="btn btn-sm btn-primary">Apply</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card job-card p-3 shadow-sm border-0">
-            <div>
-              <h6 class="fw-semibold mb-1">Backend Developer</h6>
-              <p class="text-muted small mb-1">CodeBase Inc.</p>
-              <span class="badge bg-success">Python</span>
-              <span class="badge bg-dark">Django</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <small class="text-muted">Onsite • Full-time</small>
-              <button class="btn btn-sm btn-primary">Apply</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card job-card p-3 shadow-sm border-0">
-            <div>
-              <h6 class="fw-semibold mb-1">UI/UX Designer</h6>
-              <p class="text-muted small mb-1">Creative Minds</p>
-              <span class="badge bg-info text-dark">Figma</span>
-              <span class="badge bg-secondary">Design</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mt-3">
-              <small class="text-muted">Remote • Part-time</small>
-              <button class="btn btn-sm btn-primary">Apply</button>
-            </div>
-          </div>
-        </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p class="text-muted text-center">No recommended jobs at the moment.</p>
+        <?php endif; ?>
       </div>
     </div>
 
-    <!--  Recommended Learning Resources -->
-    <div>
+    <!-- Recommended Learning Resources -->
+    <div class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="section-title">Recommended Learning Resources</h5>
-        <button class="btn btn-outline-primary btn-sm">View All</button>
+        <a href="courses/courses.php" class="btn btn-outline-primary btn-sm">View All</a>
       </div>
 
       <div class="row g-3 equal-row">
-        <div class="col-md-6 col-lg-4">
-          <div class="card resource-card p-3 shadow-sm border-0">
-            <div>
-              <div class="img-container">
-                <img src="https://img.youtube.com/vi/_uQrJ0TkZlc/maxresdefault.jpg" alt="Python Course">
+        <?php if (!empty($recommended_courses)): ?>
+          <?php foreach ($recommended_courses as $course): ?>
+            <div class="col-md-6 col-lg-4">
+              <div class="card resource-card p-3 shadow-sm border-0">
+                <div>
+                  <h6 class="fw-semibold"><?= htmlspecialchars($course['course_title'] ?? '') ?></h6>
+                  <p class="text-muted small mb-1">
+                    <?= htmlspecialchars($course['platform'] ?? 'Unknown') ?> • 
+                    <?= htmlspecialchars($course['cost_type'] ?? 'Free') ?>
+                  </p>
+                  <?php if (!empty($course['related_skills'])): ?>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                      <?php foreach (explode(',', $course['related_skills']) as $skill): ?>
+                        <span class="badge bg-light text-dark border"><?= htmlspecialchars(trim($skill)) ?></span>
+                      <?php endforeach; ?>
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($course['matching_skills'])): ?>
+                    <div class="text-success small mt-1">
+                      Matches: <?= implode(', ', $course['matching_skills']) ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <a href="<?= htmlspecialchars($course['course_url'] ?? '#') ?>" target="_blank" class="btn btn-sm btn-outline-primary mt-2">
+                  Start Learning
+                </a>
               </div>
-              <h6 class="fw-semibold">Python for Beginners</h6>
-              <p class="text-muted small">FreeCodeCamp • 4.5 hrs</p>
             </div>
-            <button class="btn btn-sm btn-outline-primary mt-2">Start Learning</button>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card resource-card p-3 shadow-sm border-0">
-            <div>
-              <div class="img-container">
-                <img src="https://img.youtube.com/vi/oHg5SJYRHA0/maxresdefault.jpg" alt="Django Course">
-              </div>
-              <h6 class="fw-semibold">Django Crash Course</h6>
-              <p class="text-muted small">Traversy Media • 2 hrs</p>
-            </div>
-            <button class="btn btn-sm btn-outline-primary mt-2">Start Learning</button>
-          </div>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-          <div class="card resource-card p-3 shadow-sm border-0">
-            <div>
-              <div class="img-container">
-                <img src="https://img.youtube.com/vi/UB1O30fR-EE/maxresdefault.jpg" alt="HTML CSS Course">
-              </div>
-              <h6 class="fw-semibold">Responsive Web Design</h6>
-              <p class="text-muted small">FreeCodeCamp • 5 hrs</p>
-            </div>
-            <button class="btn btn-sm btn-outline-primary mt-2">Start Learning</button>
-          </div>
-        </div>
+          <?php endforeach; ?>
+        <?php else: ?>
+          <p class="text-muted text-center">No recommended learning resources at the moment.</p>
+        <?php endif; ?>
       </div>
     </div>
-  </div>
+
+  </div> <!-- end main-content -->
+</div> <!-- end wrapper -->
 
 <?php
 $content = ob_get_clean();

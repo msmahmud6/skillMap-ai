@@ -17,19 +17,19 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-
-    <link rel="stylesheet" href="CSS/style.css">
+    
+<link rel="shortcut icon" href="root/img/logo.jpeg" type="image/x-icon">
+    <link rel="stylesheet" href="root/css/style.css">
     <?php if(isset($additional_links)) { echo $additional_links; } ?>
 </head>
 <body>
-    <?php include "includes/header.php"; ?>
+    <?php include "root/header.php"; ?>
     <?php if(isset($content)) { echo $content; } ?>
-    <?php include "includes/footer.php"; ?>
+    <?php include "root/footer.php"; ?>
 
 
     <!-- Bootstrap JS -->
-    <script src="JS/base.js"></script>
+    <script src="root/js/base.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
